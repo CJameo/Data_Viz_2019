@@ -1,0 +1,42 @@
+# Subsetting data obtained from US Dept of transportation repo
+# Including only four major us carriers (UA, DL, AA, WN)
+
+import sys
+import operator
+import datetime
+import pandas as pd
+import numpy as np
+import csv
+import matplotlib.pyplot as plt
+
+#combine data
+a='1.csv'
+f = open(a)
+jan = pd.read_csv(a) 
+flight1=jan.dropna(subset=['CARRIER_DELAY', 'WEATHER_DELAY'])
+
+flightUA=flight1.loc[flight1['OP_UNIQUE_CARRIER'] == 'UA']
+flightAA=flight1.loc[flight1['OP_UNIQUE_CARRIER'] == 'AA']
+flightDL=flight1.loc[flight1['OP_UNIQUE_CARRIER'] == 'DL']
+flightWN=flight1.loc[flight1['OP_UNIQUE_CARRIER'] == 'WN']
+dfMajor=pd.concat([flightUA, flightAA,flightDL,flightWN])
+dfMajor=dfMajor.drop(columns=['CANCELLATION_CODE'])
+dfMajor=dfMajor.drop(columns=['Unnamed: 37'])
+dfMajor=dfMajor.sample(n=500)
+
+
+for i in range(2,13):
+    f = open(str(i)+'.csv')
+    df = pd.read_csv(f)  
+    df=df.dropna(subset=['CARRIER_DELAY', 'WEATHER_DELAY'])
+    flightUA=df.loc[df['OP_UNIQUE_CARRIER'] == 'UA']
+    flightAA=df.loc[df['OP_UNIQUE_CARRIER'] == 'AA']
+    flightDL=df.loc[df['OP_UNIQUE_CARRIER'] == 'DL']
+    flightWN=df.loc[df['OP_UNIQUE_CARRIER'] == 'WN']
+    Major=pd.concat([flightUA, flightAA,flightDL,flightWN])
+    Major=Major.drop(columns=['CANCELLATION_CODE'])
+    Major=Major.drop(columns=['Unnamed: 37'])
+    #Major=Major.sample(n=500)
+    dfMajor=pd.concat([dfMajor, Major])
+
+dfMajor
